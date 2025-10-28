@@ -1,0 +1,91 @@
+/* page shell */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; background:#f1f5f9; color:#0f172a; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto; }
+
+.page { height:100%; width: 100%; display:flex; flex-direction:column; }
+.topbar {
+  height:56px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px; background:#fff; border-bottom:1px solid #e5e7eb; position:sticky; top:0; z-index:10;
+}
+.topbar__title { font-weight:800; }
+.link-btn { background:transparent; border:0; color:#0ea5b7; font-weight:800; cursor:pointer; }
+
+.content { width:100%; margin:16px auto 120px; padding:0 16px; }
+
+/* panels (like your sample image) */
+.panel {
+  background:#edf2fb;
+  border:1px solid #d2dae6;
+  border-radius:8px;
+  padding:14px;
+  margin-bottom:14px;
+}
+.panel__head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px; }
+.panel__head h3 { margin:0; font-size:16px; font-weight:800; }
+.panel__hint { color:#64748b; font-size:12px; }
+
+/* grid helpers */
+.grid { display:grid; gap:12px; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 760px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* fields */
+.field { display:flex; flex-direction:column; gap:6px; }
+.field__label { font-size:12px; font-weight:700; color:#334155; }
+.field__control {
+  height:36px; padding:0 10px; border:1px solid #cbd5e1; border-radius:6px; background:#fff; outline:none;
+}
+.field textarea.field__control { height:auto; padding-top:8px; padding-bottom:8px; resize:vertical; }
+
+/* mini buttons / actions */
+.actions { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
+.btn {
+  background:#0ea5b7; color:#fff; border:0; padding:20px 36px; border-radius:60px; font-weight:800; cursor:pointer;
+}
+.btn--ghost { background:#fff; color:#0ea5b7; border:1px solid #bae6fd; }
+
+.icon-btn {
+  height:32px; width:32px; display:flex; align-items:center; justify-content:center;
+  border:1px solid #e5e7eb; border-radius:8px; background:#f8fafc; cursor:pointer;
+}
+.mini-btn {
+  height:28px; padding:0 10px; border-radius:6px; border:1px solid #cbd5e1; background:#0e134b; cursor:pointer; font-weight:700;
+}
+.mini-btn--danger { border-color:#fecaca; color:#ef4444; }
+
+/* table-like for repeating rows */
+.tablelike__head {
+  display: flex;
+  justify-content: center;
+}
+.tablelike__table { border:1px solid #d2dae6; background:#fff; border-radius:8px; overflow:hidden; }
+.tablelike__row { display:grid; grid-template-columns: repeat(12, 1fr); gap:0; border-top:1px solid #e5e7eb; }
+.tablelike__row:first-child { border-top:0; }
+.tablelike__row--header { background:#f8fafc; font-weight:700; color:#475569; }
+.tablelike__cell { padding:8px; border-right:1px solid #e5e7eb; display:flex; align-items:center; }
+.tablelike__cell:last-child { border-right:0; }
+
+.tablelike__row--header .tablelike__cell input{ display:none }
+
+/* auto layout of inputs inside rows: each header gets a column span automatically */
+.tablelike__row input { width:100%; height:32px; padding:0 8px; border:1px solid #cbd5e1; border-radius:6px; }
+
+.tablelike .tablelike__row > * { grid-column: span 2; }                       /* default: 6 cells */
+.tablelike .tablelike__row > :nth-last-child(1) { grid-column: span 1; }       /* actions col */
+.tablelike .tablelike__row input:nth-child(3) { grid-column: span 3; }         /* descriptions wider */
+.tablelike .tablelike__row input:nth-child(6) { grid-column: span 3; }
+
+@media (max-width: 880px) {
+  .tablelike .tablelike__row { grid-template-columns: 1fr; }
+  .tablelike .tablelike__row > * { grid-column: span 1 !important; }
+}
+
+/* preview dialog */
+.preview { border:0; padding:0; width:min(1000px, 92vw); height:80vh; border-radius:12px; overflow:hidden; }
+.preview__bar { display:flex; align-items:center; justify-content:space-between; padding:10px; background:#fff; border-bottom:1px solid #e5e7eb; }
+.preview iframe { width:100%; height:calc(100% - 44px); border:0; display:block; background:#fff; }
+.scrim { position:fixed; inset:0; background:rgba(2,6,23,.45); }
