@@ -12,8 +12,8 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
 const emptyEdu   = () => ({ id: uid(), stream: "", from: "", to: "", percentage: "", institute: "" });
 const emptyExp   = () => ({ id: uid(), role: "", location: "", company: "", from: "", to: "", summary: "" });
-const emptyProj  = () => ({ id: uid(), title: "", stack: "", description: "", image: "" });
-const emptyCert  = () => ({ id: uid(), name: "" });
+const emptyProj  = () => ({ id: uid(), title: "", stack: "", description: "", image: "", link: "" });
+const emptyCert  = () => ({ id: uid(), name: "", link: "" });
 const emptyLang  = () => ({ id: uid(), language: "", proficiency: "" });
 
 /* ---------- Small subcomponents ---------- */
@@ -234,6 +234,7 @@ const normalizeProjects = (raw) => {
     stack: p.stack || "",
     description: p.description || "",
     image: p.image || "",
+    link: p.link || "",
   }));
 };
 const normalizeCertifications = (raw) => {
@@ -241,6 +242,7 @@ const normalizeCertifications = (raw) => {
   return (arr.length ? arr : [emptyCert()]).map((c) => ({
     id: uid(),
     name: c.name || c.title || c.certificate || c || "",
+    link: c.link || ""
   }));
 };
 const normalizeLanguages = (raw) => {
@@ -348,6 +350,17 @@ export default function ResumeForm() {
       .finally(() => setLoader(false));
   }, [uid]);
 
+  const onlyDigits = (val) => {
+    if (val == null) return "";   
+    const s = typeof val === "string" ? val : String(val);
+    return s.replace(/\D+/g, "");            
+  };
+
+  const clamp0to100 = (num) => {
+    const n = Number(num);
+    if (Number.isNaN(n)) return 0;
+    return Math.max(0, Math.min(100, Math.round(n)));
+  };
 
   const save = async () => {
     setLoader(true);
@@ -417,7 +430,7 @@ export default function ResumeForm() {
         <Panel title="Projects" hint='Use “;” for line breaks in Description'>
           <TableLike
             title = "projects"
-            headers={["Title", "Stack / Tech", "Description"]}
+            headers={["Title", "Stack / Tech", "Description", "Link"]}
             rows={projects}
             renderRow={(p) => (
               <>
@@ -446,6 +459,14 @@ export default function ResumeForm() {
                     onChange={(e) => updateProjects(p.id, "description", e.target.value)}
                     placeholder="Short description (use ; for new lines)"
                     multiline
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <InputField
+                    id={`proj-desc-${p.id}`}
+                    value={p.link}
+                    onChange={(e) => updateProjects(p.id, "link", e.target.value)}
+                    placeholder="https://www.example.com"
                   />
                 </div>
               </>
@@ -523,10 +544,13 @@ export default function ResumeForm() {
         {/* ---------- Certifications ---------- */}
         <Panel title="Certifications">
           <TableLike
-            headers={["Certificate Name"]}
+            headers={["Certificate Name", "Link"]}
             rows={certifications}
             renderRow={(c) => (
+              <>
               <div style={{ flex: 1 }}><InputField id={`cert-${c.id}`} value={c.name} onChange={(e) => updateCertifications(c.id, "name", e.target.value)} placeholder="e.g., AWS Certified Practitioner" /></div>
+              <div style={{ flex: 1 }}><InputField id={`cert-${c.id}`} value={c.link} onChange={(e) => updateCertifications(c.id, "link", e.target.value)} placeholder="https://www.example.com" /></div>
+              </>
             )}
             onAdd={addCertification}
             onRemove={removeCertification}
