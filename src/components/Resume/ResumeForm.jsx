@@ -205,7 +205,7 @@ const ensureArray = (val) => {
 
 const normalizeEducation = (raw) => {
   const arr = ensureArray(raw);
-  return (arr.length ? arr : [emptyEdu()]).map((e) => ({
+  return (arr.length ? arr : [emptyEdu()]).reverse().map((e) => ({
     id: uid(),
     stream: e.stream || e.degree || "",
     from: e.from || e.start || "",
@@ -216,7 +216,7 @@ const normalizeEducation = (raw) => {
 };
 const normalizeExperience = (raw) => {
   const arr = ensureArray(raw);
-  return (arr.length ? arr : [emptyExp()]).map((x) => ({
+  return (arr.length ? arr : [emptyExp()]).reverse().map((x) => ({
     id: uid(),
     role: x.role || "",
     location: x.location || x.mode || "",
@@ -228,7 +228,7 @@ const normalizeExperience = (raw) => {
 };
 const normalizeProjects = (raw) => {
   const arr = ensureArray(raw);
-  return (arr.length ? arr : [emptyProj()]).map((p) => ({
+  return (arr.length ? arr : [emptyProj()]).reverse().map((p) => ({
     id: uid(),
     title: p.title || p.name || "",
     stack: p.stack || "",
@@ -239,7 +239,7 @@ const normalizeProjects = (raw) => {
 };
 const normalizeCertifications = (raw) => {
   const arr = ensureArray(raw);
-  return (arr.length ? arr : [emptyCert()]).map((c) => ({
+  return (arr.length ? arr : [emptyCert()]).reverse().map((c) => ({
     id: uid(),
     name: c.name || c.title || c.certificate || c || "",
     link: c.link || ""
@@ -252,7 +252,7 @@ const normalizeLanguages = (raw) => {
     if (Number.isNaN(n)) return "";
     return Math.max(0, Math.min(100, Math.round(n)));
   };
-  return (arr.length ? arr : [emptyLang()]).map((l) => ({
+  return (arr.length ? arr : [emptyLang()]).reverse().map((l) => ({
     id: uid(),
     language: l.language || l.name || "",
     proficiency: l.proficiency === "" || l.proficiency === undefined ? "" : toNum(l.proficiency),
@@ -329,7 +329,12 @@ export default function ResumeForm() {
     });
     setResumeColor(d.resumeColor || "#0b7285")
     setSummary(d.summary || "");
-    setSkills(Array.isArray(d.skills) ? d.skills.join("; ") : d.skills || "");
+    setSkills(
+  Array.isArray(d.skills)
+    ? d.skills.join("; ").replace(/<strong>(.*?)<\/strong>/g, '""$1""')
+    : (d.skills || "").replace(/<strong>(.*?)<\/strong>/g, '""$1""')
+);
+
     setEducation(normalizeEducation(d.education));
     setExperience(normalizeExperience(d.experience));
     setProjects(normalizeProjects(d.projects));
@@ -367,24 +372,26 @@ export default function ResumeForm() {
     try {
       const payload = {
         ...personalInfo,
-        projects: projects.map(({ id, ...rest }) => rest),
-        education: education.map(({ id, ...rest }) => rest),
-        experience: experience.map(({ id, ...rest }) => rest),
-        certifications: certifications.map(({ id, ...rest }) => rest),
-        resumeColor: resumeColor,
-        skills: String(skills)
-          .split(";")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        languages: (languages || [])
-          .map((l) => ({
-            language: (l.language || "").trim(),
-            proficiency:
-              l.proficiency === "" || l.proficiency === undefined
-                ? ""
-                : clamp0to100(Number(onlyDigits(l.proficiency))),
-          }))
-          .filter((l, idx, arr) => l.language || l.proficiency !== "" || arr.length === 1),
+      projects: [...projects].reverse().map(({ id, ...rest }) => rest),
+      education: [...education].reverse().map(({ id, ...rest }) => rest),
+      experience: [...experience].reverse().map(({ id, ...rest }) => rest),
+      certifications: [...certifications].reverse().map(({ id, ...rest }) => rest),
+      resumeColor,
+      skills: String(skills)
+        .replace(/""([^"]+)""/g, "<strong>$1</strong>")
+        .split(";")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      languages: [...(languages || [])]
+        .reverse()
+        .map((l) => ({
+          language: (l.language || "").trim(),
+          proficiency:
+            l.proficiency === "" || l.proficiency === undefined
+              ? ""
+              : clamp0to100(Number(onlyDigits(l.proficiency))),
+        }))
+        .filter((l, idx, arr) => l.language || l.proficiency !== "" || arr.length === 1),
       };
       await update(ref(db, `users/${uid}`), payload);
       alert("Your resume was updated successfully!");
