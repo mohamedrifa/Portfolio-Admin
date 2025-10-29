@@ -422,7 +422,7 @@ export default function ResumeForm() {
           />
         </Panel>
 
-        <Panel title="Skills" hint='Separate with “;” – supports <strong>bold</strong>'>
+        <Panel title="Skills" hint='Separate with “;” – supports ""<strong>bold</strong>""'>
           <InputField
             id="skills"
             label="Skills"
@@ -432,7 +432,7 @@ export default function ResumeForm() {
             multiline
           />
         </Panel>
-
+        <h3 style={{ color: "#ffffff93" }}>Note: Enter data in chronological order (oldest to newest)</h3>
         {/* ---------- Projects ---------- */}
         <Panel title="Projects" hint='Use “;” for line breaks in Description'>
           <TableLike
