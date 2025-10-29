@@ -330,11 +330,10 @@ export default function ResumeForm() {
     setResumeColor(d.resumeColor || "#0b7285")
     setSummary(d.summary || "");
     setSkills(
-  Array.isArray(d.skills)
-    ? d.skills.join("; ").replace(/<strong>(.*?)<\/strong>/g, '""$1""')
-    : (d.skills || "").replace(/<strong>(.*?)<\/strong>/g, '""$1""')
-);
-
+      Array.isArray(d.skills)
+        ? d.skills.join("; ").replace(/<strong>(.*?)<\/strong>/g, '""$1""')
+        : (d.skills || "").replace(/<strong>(.*?)<\/strong>/g, '""$1""')
+    );
     setEducation(normalizeEducation(d.education));
     setExperience(normalizeExperience(d.experience));
     setProjects(normalizeProjects(d.projects));
@@ -372,25 +371,25 @@ export default function ResumeForm() {
     try {
       const payload = {
         ...personalInfo,
-      projects: [...projects].reverse().map(({ id, ...rest }) => rest),
-      education: [...education].reverse().map(({ id, ...rest }) => rest),
-      experience: [...experience].reverse().map(({ id, ...rest }) => rest),
-      certifications: [...certifications].reverse().map(({ id, ...rest }) => rest),
-      resumeColor,
-      skills: String(skills)
-        .replace(/""([^"]+)""/g, "<strong>$1</strong>")
-        .split(";")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      languages: [...(languages || [])]
-        .reverse()
-        .map((l) => ({
-          language: (l.language || "").trim(),
-          proficiency:
-            l.proficiency === "" || l.proficiency === undefined
-              ? ""
-              : clamp0to100(Number(onlyDigits(l.proficiency))),
-        }))
+        projects: [...projects].reverse().map(({ id, ...rest }) => rest),
+        education: [...education].reverse().map(({ id, ...rest }) => rest),
+        experience: [...experience].reverse().map(({ id, ...rest }) => rest),
+        certifications: [...certifications].reverse().map(({ id, ...rest }) => rest),
+        resumeColor,
+        skills: String(skills)
+          .replace(/""([^"]+)""/g, "<strong>$1</strong>")
+          .split(";")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        languages: [...(languages || [])]
+          .reverse()
+          .map((l) => ({
+            language: (l.language || "").trim(),
+            proficiency:
+              l.proficiency === "" || l.proficiency === undefined
+                ? ""
+                : clamp0to100(Number(onlyDigits(l.proficiency))),
+          }))
         .filter((l, idx, arr) => l.language || l.proficiency !== "" || arr.length === 1),
       };
       await update(ref(db, `users/${uid}`), payload);
@@ -432,7 +431,7 @@ export default function ResumeForm() {
             multiline
           />
         </Panel>
-        
+
         <h3 style={{ color: "#ffffff93" }}>Note: Enter data in chronological order (oldest to newest)</h3>
         {/* ---------- Projects ---------- */}
         <Panel title="Projects" hint='Use “;” for line breaks in Description'>
