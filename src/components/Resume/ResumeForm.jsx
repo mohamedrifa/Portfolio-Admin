@@ -4,7 +4,7 @@ import "./resume-form.css";
 import InputField from "../InputField";
 import { useAuth } from "../../services/auth";
 import { db } from "../../config/firebase";
-import { ref, update, get, child } from "firebase/database";
+import { ref, update, get, child, set } from "firebase/database";
 import ImagePicker from "./ImagePicker";
 
 /* ---------- helpers ---------- */
@@ -281,6 +281,7 @@ export default function ResumeForm() {
   const [certifications, setCertifications] = useState([emptyCert()]);
   const [languages, setLanguages] = useState([emptyLang()]);
   const [resumeColor, setResumeColor] = useState("#0b7285");
+  const [QREnabled, setQREnabled] = useState(false);
 
   const updatePersonalInfo = useCallback((key, value) => {
     setPersonalInfo(prev => (prev[key] === value ? prev : { ...prev, [key]: value }));
@@ -327,7 +328,8 @@ export default function ResumeForm() {
       address: d.address || "",
       profile: d.profile || "",
     });
-    setResumeColor(d.resumeColor || "#0b7285")
+    setResumeColor(d.resumeColor || "#0b7285");
+    setQREnabled(d.QREnabled || false);
     setSummary(d.summary || "");
     setSkills(
       Array.isArray(d.skills)
@@ -375,6 +377,7 @@ export default function ResumeForm() {
         education: [...education].reverse().map(({ id, ...rest }) => rest),
         experience: [...experience].reverse().map(({ id, ...rest }) => rest),
         certifications: [...certifications].reverse().map(({ id, ...rest }) => rest),
+        QREnabled,
         resumeColor,
         skills: String(skills)
           .replace(/""([^"]+)""/g, "<strong>$1</strong>")
