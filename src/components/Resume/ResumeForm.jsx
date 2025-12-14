@@ -382,6 +382,7 @@ export default function ResumeForm() {
     try {
       const payload = {
         ...personalInfo,
+        summary,
         projects: [...projects].reverse().map(({ id, ...rest }) => rest),
         education: [...education].reverse().map(({ id, ...rest }) => rest),
         experience: [...experience].reverse().map(({ id, ...rest }) => rest),
