@@ -69,21 +69,28 @@ const PersonalSection = memo(({ data, onChange }) => (
         placeholder="you@example.com"
       />
       <InputField
+        id="linkedin"
+        label="LinkedIn"
+        value={data.linkedIn}
+        onChange={(e) => onChange("linkedIn", e.target.value)}
+        placeholder="linkedin.com/in/username"
+      />
+    </div>
+
+    <div className="grid grid-3">
+      <InputField
         id="git"
         label="GitHub / Others"
         value={data.git}
         onChange={(e) => onChange("git", e.target.value)}
         placeholder="github.com/username"
       />
-    </div>
-
-    <div className="grid grid-2">
       <InputField
-        id="linkedin"
-        label="LinkedIn"
-        value={data.linkedIn}
-        onChange={(e) => onChange("linkedIn", e.target.value)}
-        placeholder="linkedin.com/in/username"
+        id="portfolio"
+        label="Portfolio"
+        value={data.portfolio}
+        onChange={(e) => onChange("portfolio", e.target.value)}
+        placeholder="www.example.com"
       />
       <ImagePicker value={data.profile} onChange={(val) => onChange("profile", val)} />
     </div>
@@ -268,6 +275,7 @@ export default function ResumeForm() {
     email: "",
     git: "",
     linkedIn: "",
+    portfolio: "",
     phone: "",
     address: "",
     profile: "",
@@ -324,6 +332,7 @@ export default function ResumeForm() {
       email: d.email || "",
       git: d.git || "",
       linkedIn: d.linkedIn || "",
+      portfolio: d.portfolio || "",
       phone: d.phone || "",
       address: d.address || "",
       profile: d.profile || "",
