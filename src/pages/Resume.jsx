@@ -35,6 +35,14 @@ const Resume = () => {
     }
   };
 
+  const jobName = useMemo(
+    () =>
+      `Resume_${(resume?.name || "profile")
+        .replace(/\s+/g, "_")
+        .replace(/[^\w\-]/g, "")}`,
+    [resume?.name]
+  );
+
   const downloadPDF = async () => {
     setDownloading(true);
     const response = await fetch(`${BACKEND_URL}/generate-pdf`, {
@@ -42,14 +50,14 @@ const Resume = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         html: resumeTemplate(resume),
-        fileName: "resume.pdf",
+        fileName: `${jobName}.pdf`,
       }),
     });
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "resume.pdf";
+    a.download = `${jobName}.pdf`;
     a.click();
     setDownloading(false);
     alert("PDF Saved Successfully!");
