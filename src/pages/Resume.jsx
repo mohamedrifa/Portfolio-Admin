@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../config/firebase";
 import { ref, get, child } from "firebase/database";
-import { resumeTemplate } from "../utils/ResumeTemplate";
+import { resumeTemplate } from "../utils/klsjklgf";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
