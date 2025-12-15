@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../config/firebase";
-import { ref, get, child, set } from "firebase/database";
+import { ref, get, child } from "firebase/database";
 import { resumeTemplate } from "../utils/ResumeTemplate";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 const Resume = () => {
   const { id } = useParams();
@@ -35,7 +37,7 @@ const Resume = () => {
 
   const downloadPDF = async () => {
     setDownloading(true);
-    const response = await fetch("http://localhost:5000/generate-pdf", {
+    const response = await fetch(`${BACKEND_URL}/generate-pdf`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
