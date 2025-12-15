@@ -17,7 +17,7 @@ export default function Home() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      background: "#0b1220", // subtle dark canvas looks crisp with light cards
+      background: "#0b1220",
     },
     container: {
       width: "100%",
