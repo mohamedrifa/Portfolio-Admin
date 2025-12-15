@@ -20,6 +20,19 @@ const Resume = () => {
       .finally(() => setLoader(false));
   }, [id]);
 
+  useEffect(() => {
+    const prevTitle = document.title;
+    if (resume?.name) {
+      document.title = `My Resume | ${resume.name}`;
+    } else {
+      document.title = "My Resume";
+    }
+    return () => {
+      document.title = prevTitle;
+    };
+  }, [resume]);
+
+
   const resumeHTML = useMemo(
     () => (resume ? resumeTemplate(resume) : ""),
     [resume]
