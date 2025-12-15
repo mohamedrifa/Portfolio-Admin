@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./services/auth";
 import "./index.css"; // <- IMPORTANT: loads the global reset (body { margin: 0; })
