@@ -62,8 +62,11 @@ export const resumeTemplate = (data) => {
   const skillsSection = () => {
     const skillsArray = Array.isArray(data.skills)
       ? data.skills
-      : (data.skills || "").split(';');
-
+      : (data.skills || "")
+          .split(/<\/?div>|<\/?p>|<br\s*\/?>/i)
+          .map(s => s.trim())
+          .filter(Boolean)
+          .map(s => `<div>${s}</div>`);
     const hasAny = skillsArray.some(s => String(s).trim().length > 0);
     if (hasAny) {
       return `<section aria-label="Skills">
@@ -73,6 +76,7 @@ export const resumeTemplate = (data) => {
     }
     return "";
   };
+
 
   const profileImage = () => {
     if (data.profile && data.profile.trim() !== "") {
@@ -90,9 +94,10 @@ export const resumeTemplate = (data) => {
     for (let i = 0; i < projects.length; i++) {
       const p = projects[i] || {};
       const lines = String(p.description || "")
-        .split(";")
+        .split(/<\/?div>|<\/?p>|<br\s*\/?>/i)
         .map(s => s.trim())
-        .filter(Boolean);
+        .filter(Boolean)
+        .map(s => `<div>${s}</div>`);
       const listItems = lines.map(line => `<li>${line}</li>`).join("");
       projectContent += `
         <div class="block">
@@ -143,9 +148,10 @@ export const resumeTemplate = (data) => {
     for (let i = 0; i < experiences.length; i++) {
       const p = experiences[i] || {};
       const lines = String(p.summary || "")
-        .split(';')
+        .split(/<\/?div>|<\/?p>|<br\s*\/?>/i)
         .map(s => s.trim())
-        .filter(Boolean);
+        .filter(Boolean)
+        .map(s => `<div>${s}</div>`);
       const listItems = lines.map(line => `<li>${line}</li>`).join('');
       experienceContent += `
         <div class="block">
@@ -205,6 +211,46 @@ export const resumeTemplate = (data) => {
     } else {
       return "";
     }
+  };
+
+  const CustomSection = () => {
+    if (!Array.isArray(data.customSections) || data.customSections.length === 0) {
+      return "";
+    }
+    return data.customSections
+      .map((section) => {
+        const items = Array.isArray(section.items) ? section.items : [];
+        return `
+          <section aria-label="${section.title || "Custom Section"}">
+            <h2>${section.title || "Custom Section"}</h2>
+            ${items
+              .map((item) => {
+                if(!item.description.includes("</div><div>")) {
+                  return `
+                    <div class="block">
+                      ${item.heading ? `<h3>${item.heading}</h3>` : ""}
+                      ${item.description ? `<p>${item.description}</p>` : ""}
+                    </div>
+                  `;
+                }
+                const lines = String(item.description || "")
+                  .split(/<\/?div>|<\/?p>|<br\s*\/?>/i)
+                  .map(s => s.trim())
+                  .filter(Boolean)
+                  .map(s => `<li><div>${s}</div></li>`)
+                  .join("");
+                return `
+                  <div class="block">
+                    ${item.heading ? `<h3>${item.heading}</h3>` : ""}
+                    ${lines || lines !== "" ? `<ul>${lines}</ul>` : ""}
+                  </div>
+                `;
+              })
+              .join("")}
+          </section>
+        `;
+      })
+      .join("");
   };
 
   const certifications = () => {
@@ -430,6 +476,9 @@ export const resumeTemplate = (data) => {
 
   <!-- Languages -->
   ${languagesSection()}
+
+  <!-- Custom Sections -->
+  ${CustomSection()}
 
   <!-- Certifications -->
   ${certifications()}
