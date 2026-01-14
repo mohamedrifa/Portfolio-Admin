@@ -29,13 +29,10 @@ const CustomSectionPanel = ({ customSections, setCustomSections }) => {
     setCustomSections((prev) =>
       prev.map((section) => {
         if (section.id !== sectionId) return section;
-
         // Update section title
         if (type === "title") {
           return { ...section, title: args[0] };
         }
-
-        // Add item
         if (type === "addItem") {
           return {
             ...section,
@@ -45,8 +42,6 @@ const CustomSectionPanel = ({ customSections, setCustomSections }) => {
             ],
           };
         }
-
-        // Remove item (by item.id)
         if (type === "removeItem") {
           const [itemId] = args;
           return {
@@ -54,15 +49,16 @@ const CustomSectionPanel = ({ customSections, setCustomSections }) => {
             items: section.items.filter((item) => item.id !== itemId),
           };
         }
-
-        // Update item fields
         if (type === "items") {
-          const [iIdx, field, value] = args;
-          const items = [...section.items];
-          items[iIdx] = { ...items[iIdx], [field]: value };
-          return { ...section, items };
+          const [itemId, field, value] = args;
+          console.log(args);
+          return {
+            ...section,
+            items: section.items.map((item) =>
+              item.id === itemId ? { ...item, [field]: value } : item
+            ),
+          };
         }
-
         return section;
       })
     );
@@ -94,16 +90,17 @@ const CustomSectionPanel = ({ customSections, setCustomSections }) => {
             <TableLike
               headers={["Item Title", "Item Description"]}
               rows={section.items}
-              renderRow={(item, iIdx) => (
+              renderRow={(item) => (
                 <React.Fragment key={item.id}>
                   <div style={{ flex: 1 }}>
                     <InputField
+                      id={`item-heading-${item.id}`}
                       value={item.heading}
                       onChange={(e) =>
                         updateSection(
                           section.id,
                           "items",
-                          iIdx,
+                          item.id,
                           "heading",
                           e.target.value
                         )
@@ -114,14 +111,15 @@ const CustomSectionPanel = ({ customSections, setCustomSections }) => {
 
                   <div style={{ flex: 1 }}>
                     <InputField
+                      id={`item-desc-${item.id}`}
                       value={item.description}
-                      onChange={(e) =>
+                      onChangeText={(e) =>
                         updateSection(
                           section.id,
                           "items",
-                          iIdx,
+                          item.id,
                           "description",
-                          e.target.value
+                          e
                         )
                       }
                       placeholder="Item Description"

@@ -156,7 +156,10 @@ export default function ResumeForm() {
         education: [...education].reverse().map(({ id, ...rest }) => rest),
         experience: [...experience].reverse().map(({ id, ...rest }) => rest),
         certifications: [...certifications].reverse().map(({ id, ...rest }) => rest),
-        customSections: [...customSections].map(({ id, ...rest }) => rest),
+        customSections: customSections.map(({ id, items, ...sectionRest }) => ({
+  ...sectionRest,
+  items: items.map(({ id, ...itemRest }) => itemRest),
+})),
         QREnabled,
         resumeColor,
         skills: String(skills)

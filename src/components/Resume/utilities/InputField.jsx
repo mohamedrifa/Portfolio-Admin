@@ -4,6 +4,7 @@ export default function InputField({
   label,
   value,
   onChangeText,
+  onChange,
   multiline = false,
   placeholder,
   theme = {
@@ -20,14 +21,23 @@ export default function InputField({
 
   // Initialize editor content
   useEffect(() => {
-    if (multiline && editorRef.current && value) {
-      editorRef.current.innerHTML = value;
+    if (multiline && editorRef.current) {
+      if (!focused && editorRef.current.innerHTML !== value) {
+        editorRef.current.innerHTML = value || '';
+      }
     }
-  }, [value, multiline]);
+  }, [value, multiline, focused]);
 
   const handleChange = () => {
-    onChangeText?.(editorRef.current.innerHTML);
+    const htmlContent = editorRef.current.innerHTML;
+    onChangeText?.(htmlContent);
+    onChange?.({ target: { value: htmlContent } });
     updateActiveStyles();
+  };
+
+  const handleChangetext = (e) => {
+    onChangeText?.(e.target.value);
+    onChange?.(e); // keep default web handler too
   };
 
   const execCommand = (command) => {
@@ -154,7 +164,7 @@ export default function InputField({
         ) : (
           <input
             value={value}
-            onChange={(e) => onChangeText?.(e.target.value)}
+            onChange={handleChangetext}
             placeholder={placeholder}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
