@@ -109,7 +109,7 @@ export default function ResumeForm() {
     setResumeColor(d.resumeColor || "#0b7285");
     setQREnabled(d.QREnabled || false);
     setSummary(d.summary || "");
-    setSkills( String(form.skills).split("<div>").map(s => s.trim()).filter(Boolean).map(s => "<div>" + s),);
+    setSkills(Array.isArray(d.skills) ? d.skills.join("") : (d.skills || ""),);
     setEducation(normalizeEducation(d.education));
     setExperience(normalizeExperience(d.experience));
     setProjects(normalizeProjects(d.projects));
@@ -155,11 +155,11 @@ export default function ResumeForm() {
         })).filter(section => !isSectionEmpty(section)),
         QREnabled,
         resumeColor,
-        skills: String(skills)
-          .replace(/""([^"]+)""/g, "<strong>$1</strong>")
-          .split(";")
-          .map((s) => s.trim())
-          .filter(Boolean),
+        skills: String(form.skills)
+          .split("<div>")
+          .map(s => s.trim())
+          .filter(Boolean)
+          .map(s => "<div>" + s),
         languages: [...(languages || [])]
           .reverse()
           .map((l) => ({
