@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { db } from "../config/firebase";
-import { ref, get, child } from "firebase/database";
 import { resumeTemplate } from "../utils/ResumeTemplate";
+import { fetchUserData } from "../utils/editResume/api";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -12,12 +11,23 @@ const Resume = () => {
   const [downloading, setDownloading] = useState(false);
   const [resume, setResume] = useState(null);
 
-  useEffect(() => {
+  const loadData = async () => {
     if (!id) return;
     setLoader(true);
-    get(child(ref(db), `users/${id}`))
-      .then((snap) => snap.exists() && setResume(snap.val()))
-      .finally(() => setLoader(false));
+    try {
+      const data = await fetchUserData(id);
+      setResume(data);
+    } catch (error) {
+      console.warn("Failed to fetch resume data:", error);
+      setResume(null);
+    }
+    finally {
+      setLoader(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
   }, [id]);
 
   useEffect(() => {

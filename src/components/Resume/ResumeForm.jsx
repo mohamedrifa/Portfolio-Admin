@@ -13,7 +13,7 @@ import EducationPanel from "./EducationPanel";
 import { fetchUserData } from "../../utils/editResume/api";
 import LanguagesPanel from "./LanguagesPanel";
 import CertificationsPanel from "./CertificationsPanel";
-import { normalizeEducation, normalizeExperience, normalizeProjects, normalizeCertifications, normalizeLanguages } from "../../utils/editResume/normalization";
+import { normalizeEducation, normalizeExperience, normalizeProjects, normalizeCertifications, normalizeLanguages, normalizeCustomSections } from "../../utils/editResume/normalization";
 import CustomSectionPanel from "./CustomSectionPanel";
 
 /* ---------- helpers ---------- */
@@ -91,6 +91,8 @@ export default function ResumeForm() {
   const { user } = useAuth();
   const uid = user?.uid;
 
+  const isItemEmpty = (item) => !item.heading?.trim() && !item.description?.trim();
+  const isSectionEmpty = (section) => !section.title?.trim() && section.items.every(isItemEmpty);
 
   const setFromObj = (d = {}) => {
     setPersonalInfo({
@@ -117,11 +119,7 @@ export default function ResumeForm() {
     setProjects(normalizeProjects(d.projects));
     setCertifications(normalizeCertifications(d.certifications));
     setLanguages(normalizeLanguages(d.languages));
-    setCustomSections(d.customSections?.map(s => ({
-      id: s.id || genId(),
-      title: s.title || "",
-      items: s.items?.map(item => ({ id: genId(), heading: item.heading || "", description: item.description || "" })) || [],
-    })) || [emptyCustomSection()]);
+    setCustomSections(normalizeCustomSections(d.customSections));
   };
 
   useEffect(() => {
@@ -152,14 +150,13 @@ export default function ResumeForm() {
       const payload = {
         ...personalInfo,
         summary,
-        projects: [...projects].reverse().map(({ id, ...rest }) => rest),
         education: [...education].reverse().map(({ id, ...rest }) => rest),
         experience: [...experience].reverse().map(({ id, ...rest }) => rest),
         certifications: [...certifications].reverse().map(({ id, ...rest }) => rest),
-        customSections: customSections.map(({ id, items, ...sectionRest }) => ({
-  ...sectionRest,
-  items: items.map(({ id, ...itemRest }) => itemRest),
-})),
+        customSections: [...customSections].map(({ id, items, ...sectionRest }) => ({
+          ...sectionRest,
+          items: items.map(({ id, ...itemRest }) => itemRest),
+        })).filter(section => !isSectionEmpty(section)),
         QREnabled,
         resumeColor,
         skills: String(skills)
@@ -178,6 +175,15 @@ export default function ResumeForm() {
           }))
         .filter((l, idx, arr) => l.language || l.proficiency !== "" || arr.length === 1),
       };
+      const projectUpdates = [...projects].reverse().map((p, i) =>
+        update(ref(db, `users/${uid}/projects/${i}`), {
+          title: p.title,
+          stack: p.stack,
+          description: p.description,
+          link: p.link,
+        })
+      );
+      await Promise.all(projectUpdates);
       await update(ref(db, `users/${uid}`), payload);
       alert("Your resume was updated successfully!");
     } catch (err) {

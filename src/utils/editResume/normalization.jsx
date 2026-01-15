@@ -5,7 +5,11 @@ const emptyExp   = () => ({ id: uid(), role: "", location: "", company: "", from
 const emptyProj  = () => ({ id: uid(), title: "", stack: "", description: "", image: "", link: "" });
 const emptyCert  = () => ({ id: uid(), name: "", link: "" });
 const emptyLang  = () => ({ id: uid(), language: "", proficiency: "" });
-
+const emptyCustomSection = () => ({
+  id: uid(),
+  title: "",
+  items: [{ id: uid(), heading: "", description: "" }],
+});
 
 const ensureArray = (val) => {
   if (Array.isArray(val)) return val;
@@ -41,8 +45,10 @@ export const normalizeExperience = (raw) => {
 };
 export const normalizeProjects = (raw) => {
   const arr = ensureArray(raw);
-  return (arr.length ? arr : [emptyProj()]).reverse().map((p) => ({
+  const list = arr.length ? arr : [emptyProj()];
+  return list.reverse().map((p, index, reversedArr) => ({
     id: uid(),
+    firebaseIndex: reversedArr.length - 1 - index,
     title: p.title || p.name || "",
     stack: p.stack || "",
     description: p.description || "",
@@ -71,3 +77,12 @@ export const normalizeLanguages = (raw) => {
     proficiency: l.proficiency === "" || l.proficiency === undefined ? "" : toNum(l.proficiency),
   }));
 };
+
+export const normalizeCustomSections = (raw) => {
+  const arr = ensureArray(raw);
+  return (arr.length ? arr : [emptyCustomSection()]).map((s) => ({
+    id: s.id || uid(),
+    title: s.title || "",
+    items: s.items?.map(item => ({ id: uid(), heading: item.heading || "", description: item.description || "" })) || [],
+  }));
+}
