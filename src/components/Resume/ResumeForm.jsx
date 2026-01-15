@@ -155,7 +155,7 @@ export default function ResumeForm() {
         })).filter(section => !isSectionEmpty(section)),
         QREnabled,
         resumeColor,
-        skills: String(form.skills)
+        skills: String(skills)
           .split("<div>")
           .map(s => s.trim())
           .filter(Boolean)
