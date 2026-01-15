@@ -109,11 +109,7 @@ export default function ResumeForm() {
     setResumeColor(d.resumeColor || "#0b7285");
     setQREnabled(d.QREnabled || false);
     setSummary(d.summary || "");
-    setSkills(
-      Array.isArray(d.skills)
-        ? d.skills.join("; ").replace(/<strong>(.*?)<\/strong>/g, '""$1""')
-        : (d.skills || "").replace(/<strong>(.*?)<\/strong>/g, '""$1""')
-    );
+    setSkills( String(form.skills).split("<div>").map(s => s.trim()).filter(Boolean).map(s => "<div>" + s),);
     setEducation(normalizeEducation(d.education));
     setExperience(normalizeExperience(d.experience));
     setProjects(normalizeProjects(d.projects));
