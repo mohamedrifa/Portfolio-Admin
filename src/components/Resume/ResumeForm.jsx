@@ -140,6 +140,10 @@ export default function ResumeForm() {
     return Math.max(0, Math.min(100, Math.round(n)));
   };
 
+  const handlePreview = () => {
+    window.open(`/resume/${uid}`, "_blank");
+  };
+
   const save = async () => {
     setLoader(true);
     try {
@@ -261,6 +265,18 @@ export default function ResumeForm() {
         />
 
         <div className="actions" style={{ position: 'sticky', right: 10, bottom: 10 }}>
+          <button
+            className="preview-btn"
+            type="button"
+            onClick={handlePreview}
+            disabled={loader}
+            style={{
+              opacity: loader ? 0.6 : 1,
+              cursor: loader ? "not-allowed" : "pointer",
+            }}
+          >
+            {loader ? "Loading..." : "Preview"}
+          </button>
           <button
             className="btn"
             type="button"

@@ -47,6 +47,26 @@ body { margin: 0; background:#f1f5f9; color:#0f172a; font-family: ui-sans-serif,
   background:#0ea5b7; color:#fff; border:0; padding:20px 36px; border-radius:60px; font-weight:800; cursor:pointer;
 }
 .btn--ghost { background:#fff; color:#0ea5b7; border:1px solid #bae6fd; }
+.preview-btn {
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 2px solid #0f172a;
+  padding: 12px 28px;
+  border-radius: 60px;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+.preview-btn:hover:not(:disabled) {
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+.preview-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .icon-btn {
   height:32px; width:32px; display:flex; align-items:center; justify-content:center;
