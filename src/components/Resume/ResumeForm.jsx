@@ -144,6 +144,17 @@ export default function ResumeForm() {
     window.open(`/resume/${uid}`, "_blank");
   };
 
+  const isExperienceEmpty = (exp) => {
+    return (
+      !exp.role?.trim() &&
+      !exp.company?.trim() &&
+      !exp.location?.trim() &&
+      !exp.from?.trim() &&
+      !exp.to?.trim() &&
+      !exp.summary?.trim()
+    );
+  };
+
   const save = async () => {
     setLoader(true);
     try {
@@ -151,7 +162,10 @@ export default function ResumeForm() {
         ...personalInfo,
         summary,
         education: [...education].reverse().map(({ id, ...rest }) => rest),
-        experience: [...experience].reverse().map(({ id, ...rest }) => rest),
+        experience: [...experience]
+  .filter((exp) => !isExperienceEmpty(exp))
+  .reverse()
+  .map(({ id, ...rest }) => rest),
         certifications: [...certifications].reverse().map(({ id, ...rest }) => rest),
         customSections: [...customSections].map(({ id, items, ...sectionRest }) => ({
           ...sectionRest,
