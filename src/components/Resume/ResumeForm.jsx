@@ -154,6 +154,26 @@ export default function ResumeForm() {
       !exp.summary?.trim()
     );
   };
+  
+  const isEducationEmpty = (edu) => {
+    return (
+      !edu.stream?.trim() &&
+      !edu.degree?.trim() &&
+      !edu.institution?.trim() &&
+      !edu.year?.trim()
+    );
+  };
+
+  const isCertificationEmpty = (cert) => {
+  const name = String(cert?.name ?? "").trim();
+  const link = String(cert?.link ?? "").trim();
+
+  return !name && !link;
+};
+
+  const isProjectEmpty = (proj) => {
+    return !proj.title?.trim() && !proj.stack?.trim() && !proj.description?.trim() && !proj.link?.trim();
+  }
 
   const save = async () => {
     setLoader(true);
@@ -161,12 +181,18 @@ export default function ResumeForm() {
       const payload = {
         ...personalInfo,
         summary,
-        education: [...education].reverse().map(({ id, ...rest }) => rest),
+        education: [...education]
+          .filter((edu) => !isEducationEmpty(edu))
+          .reverse()
+          .map(({ id, ...rest }) => rest),
+        certifications: [...certifications]
+          .filter((cert) => !isCertificationEmpty(cert))
+          .reverse()
+          .map(({ id, ...rest }) => rest),
         experience: [...experience]
-  .filter((exp) => !isExperienceEmpty(exp))
-  .reverse()
-  .map(({ id, ...rest }) => rest),
-        certifications: [...certifications].reverse().map(({ id, ...rest }) => rest),
+          .filter((exp) => !isExperienceEmpty(exp))
+          .reverse()
+          .map(({ id, ...rest }) => rest),
         customSections: [...customSections].map(({ id, items, ...sectionRest }) => ({
           ...sectionRest,
           items: items.map(({ id, ...itemRest }) => itemRest),

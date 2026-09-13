@@ -60,7 +60,7 @@ export const normalizeCertifications = (raw) => {
   const arr = ensureArray(raw);
   return (arr.length ? arr : [emptyCert()]).reverse().map((c) => ({
     id: uid(),
-    name: c.name || c.title || c.certificate || c || "",
+    name: c.name || "",
     link: c.link || ""
   }));
 };
